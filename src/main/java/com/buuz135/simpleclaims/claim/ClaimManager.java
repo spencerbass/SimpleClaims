@@ -15,6 +15,7 @@ import java.awt.*;
 import java.io.IOException;
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.logging.Level;
 
 public class ClaimManager {
 
@@ -23,6 +24,9 @@ public class ClaimManager {
     private HashMap<String, PartyInfo> parties;
     private HashMap<String, HashMap<String, ChunkInfo>> chunks;
     private boolean needsMapUpdate;
+    private boolean isDirty;
+    private Thread savingThread;
+    private HytaleLogger logger = HytaleLogger.getLogger().getSubLogger("SimpleClaims");
 
     public static ClaimManager getInstance() {
         return INSTANCE;
@@ -32,6 +36,7 @@ public class ClaimManager {
         this.parties = new HashMap<>();
         this.chunks = new HashMap<>();
         this.needsMapUpdate = false;
+        this.isDirty = false;
 
         FileUtils.ensureMainDirectory();
 
@@ -42,8 +47,10 @@ public class ClaimManager {
                 this.parties.put(party.getId().toString(), party);
             }
         } catch (IOException e) {
+            logger.at(Level.SEVERE).log("LOADING PARTY FILE ERROR");
+            logger.at(Level.SEVERE).log(e.getMessage());
             //throw new RuntimeException(e);
-            // Create the file again
+            // TODO Create the file again
         }
 
         try {
@@ -57,36 +64,51 @@ public class ClaimManager {
                 this.chunks.put(chunkInfoStorage.getDimension(), hashMap);
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
-            // Create the file again
+            logger.at(Level.SEVERE).log("LOADING CLAIM FILE ERROR");
+            logger.at(Level.SEVERE).log(e.getMessage());
+            //throw new RuntimeException(e);
+            // TODO Create the file again
         }
+
+        this.savingThread = new Thread(() -> {
+            while (true) {
+                if (isDirty) {
+                    isDirty = false;
+                    logger.at(Level.INFO).log("Saving data...");
+                    FileUtils.ensureMainDirectory();
+
+                    try {
+                        var partyPath = FileUtils.ensureFile(FileUtils.PARTY_PATH, "{}");
+                        BsonUtil.writeSync(partyPath.toPath(), PartyInfoStorage.CODEC, new PartyInfoStorage(this.parties.values().toArray(new PartyInfo[0])), HytaleLogger.getLogger());
+                    } catch (IOException e) {
+                        logger.at(Level.SEVERE).log(e.getMessage());
+                    }
+
+                    try {
+                        var claimPath = FileUtils.ensureFile(FileUtils.CLAIM_PATH, "{}");
+                        var dimensionalStorages = new ArrayList<ChunkInfo.ChunkInfoStorage>();
+                        this.chunks.forEach((dimension, chunkInfos) -> dimensionalStorages.add(new ChunkInfo.ChunkInfoStorage(dimension, chunkInfos.values().toArray(new ChunkInfo[0]))));
+                        BsonUtil.writeSync(claimPath.toPath(), ChunkInfo.DimensionStorage.CODEC, new ChunkInfo.DimensionStorage(dimensionalStorages.toArray(new ChunkInfo.ChunkInfoStorage[0])), HytaleLogger.getLogger());
+                    } catch (IOException e) {
+                        logger.at(Level.SEVERE).log(e.getMessage());
+                    }
+                    logger.at(Level.INFO).log("Finished saving data... Eepy time...");
+                }
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                    logger.at(Level.SEVERE).log("SAVING THREAD ERROR");
+                    logger.at(Level.SEVERE).log(e.getMessage());
+                }
+            }
+        });
+        this.savingThread.start();
+
         markDirty();
     }
 
     public void markDirty() {
-        //TODO MULITPLE THREADS
-        new Thread(() -> {
-            FileUtils.ensureMainDirectory();
-
-
-            try {
-                var partyPath = FileUtils.ensureFile(FileUtils.PARTY_PATH, "{}");
-                BsonUtil.writeSync(partyPath.toPath(), PartyInfoStorage.CODEC, new PartyInfoStorage(this.parties.values().toArray(new PartyInfo[0])), HytaleLogger.getLogger());
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-
-            try {
-                var claimPath = FileUtils.ensureFile(FileUtils.CLAIM_PATH, "{}");
-                var dimensionalStorages = new ArrayList<ChunkInfo.ChunkInfoStorage>();
-                this.chunks.forEach((dimension, chunkInfos) -> dimensionalStorages.add(new ChunkInfo.ChunkInfoStorage(dimension, chunkInfos.values().toArray(new ChunkInfo[0]))));
-                BsonUtil.writeSync(claimPath.toPath(), ChunkInfo.DimensionStorage.CODEC, new ChunkInfo.DimensionStorage(dimensionalStorages.toArray(new ChunkInfo.ChunkInfoStorage[0])), HytaleLogger.getLogger());
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-
-
-        }).start();
+        this.isDirty = true;
         setNeedsMapUpdate(true);
     }
 
