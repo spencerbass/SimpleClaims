@@ -222,7 +222,7 @@ public class ClaimManager {
     }
 
     public boolean hasEnoughClaimsLeft(PartyInfo partyInfo){
-        int maxAmount = 25;
+        int maxAmount = partyInfo.getMaxClaimAmount();
         int currentAmount = 0;
         for (String dimension : this.chunks.keySet()) {
             for (ChunkInfo value : this.chunks.get(dimension).values()) {
