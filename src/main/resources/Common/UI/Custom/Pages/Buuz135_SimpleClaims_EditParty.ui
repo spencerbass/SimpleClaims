@@ -130,6 +130,10 @@ $C.@PageOverlay {
             @Text = "Allow Block Interact";
             Padding: (Bottom: 4);
           }
+          $C.@CheckBoxWithLabel #PVPSetting {
+            @Text = "PVP";
+            Padding: (Bottom: 4);
+          }
         }
 
        Group #Separator{

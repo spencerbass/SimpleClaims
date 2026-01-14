@@ -1,4 +1,4 @@
-# 1.0.7
+# 1.0.7 & 1.0.8
 
 * Fixed F key pickup not being protected in claimed chunks
 * Fixed world map not updating after claiming/unclaiming chunks
@@ -11,6 +11,7 @@
 * Performance: PartyInfo now uses O(1) lookups for member/override checks
 * Changed the category name for the chunk config to make it more clear what it does
 * Added a way to remove parties from the admin party list
+* Added PVP protection for claims
 
 # 1.0.6
 

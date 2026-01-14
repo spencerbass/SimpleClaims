@@ -156,6 +156,14 @@ public class PartyInfo {
         return Main.CONFIG.get().isDefaultPartyBlockInteractEnabled();
     }
 
+    public boolean isPVPEnabled() {
+        var override = this.getOverride(PartyOverrides.PARTY_PROTECTION_PVP);
+        if (override != null) {
+            return (Boolean) override.getValue().getTypedValue();
+        }
+        return Main.CONFIG.get().isDefaultPartyPVPEnabled();
+    }
+
     public void setOverride(PartyOverride override){
         overrideMap.put(override.getType(), override);
     }

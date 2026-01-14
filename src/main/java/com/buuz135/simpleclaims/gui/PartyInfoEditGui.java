@@ -84,6 +84,9 @@ public class PartyInfoEditGui extends InteractiveCustomUIPage<PartyInfoEditGui.P
             if (action.equals("InteractBlocksSetting")){
                 this.info.setOverride(new PartyOverride(PartyOverrides.PARTY_PROTECTION_INTERACT, new PartyOverride.PartyOverrideValue("bool", !this.info.isBlockInteractEnabled())));
             }
+            if (action.equals("PVPSetting")) {
+                this.info.setOverride(new PartyOverride(PartyOverrides.PARTY_PROTECTION_PVP, new PartyOverride.PartyOverrideValue("bool", !this.info.isPVPEnabled())));
+            }
             UICommandBuilder commandBuilder = new UICommandBuilder();
             UIEventBuilder eventBuilder = new UIEventBuilder();
             this.build(ref, commandBuilder, eventBuilder, store);
@@ -142,10 +145,14 @@ public class PartyInfoEditGui extends InteractiveCustomUIPage<PartyInfoEditGui.P
         uiCommandBuilder.set("#BreakBlocksSetting #CheckBox.Disabled", !playerCanModify);
         uiCommandBuilder.set("#InteractBlocksSetting #CheckBox.Value",this.info.isBlockInteractEnabled());
         uiCommandBuilder.set("#InteractBlocksSetting #CheckBox.Disabled", !playerCanModify);
+        uiCommandBuilder.set("#PVPSetting #CheckBox.Value", this.info.isPVPEnabled());
+        uiCommandBuilder.set("#PVPSetting #CheckBox.Disabled", !playerCanModify);
 
         uiEventBuilder.addEventBinding(CustomUIEventBindingType.ValueChanged, "#PlaceBlocksSetting #CheckBox", EventData.of("RemoveButtonAction", "PlaceBlocksSetting:0"), false);
         uiEventBuilder.addEventBinding(CustomUIEventBindingType.ValueChanged, "#BreakBlocksSetting #CheckBox", EventData.of("RemoveButtonAction", "BreakBlocksSetting:0"), false);
         uiEventBuilder.addEventBinding(CustomUIEventBindingType.ValueChanged, "#InteractBlocksSetting #CheckBox", EventData.of("RemoveButtonAction", "InteractBlocksSetting:0"), false);
+        uiEventBuilder.addEventBinding(CustomUIEventBindingType.ValueChanged, "#PVPSetting #CheckBox", EventData.of("RemoveButtonAction", "PVPSetting:0"), false);
+
 
         uiCommandBuilder.set("#ClaimColorPickerGroup #ClaimColorPicker.Value", String.format("#%06X", (0xFFFFFF & this.info.getColor())));
         //uiCommandBuilder.set("#ClaimColorPickerGroup #ClaimColorPicker.IsReadOnly", !playerCanModify);

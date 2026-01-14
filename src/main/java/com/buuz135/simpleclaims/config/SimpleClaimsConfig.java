@@ -25,12 +25,16 @@ public class SimpleClaimsConfig {
             .append(new KeyedCodec<Boolean>("CreativeModeBypassProtection", Codec.BOOLEAN),
                     (simpleClaimsConfig, value, extraInfo) -> simpleClaimsConfig.CreativeModeBypassProtection = value,
                     (simpleClaimsConfig, extraInfo) -> simpleClaimsConfig.CreativeModeBypassProtection).add()
+            .append(new KeyedCodec<Boolean>("DefaultPartyPVPEnabled", Codec.BOOLEAN),
+                    (simpleClaimsConfig, value, extraInfo) -> simpleClaimsConfig.DefaultPartyPVPEnabled = value,
+                    (simpleClaimsConfig, extraInfo) -> simpleClaimsConfig.DefaultPartyPVPEnabled).add()
             .build();
 
     private int DefaultPartyClaimsAmount = 25;
     private boolean DefaultPartyBlockPlaceEnabled = false;
     private boolean DefaultPartyBlockBreakEnabled = false;
     private boolean DefaultPartyBlockInteractEnabled = false;
+    private boolean DefaultPartyPVPEnabled = false;
 
     private boolean ForceSimpleClaimsChunkWorldMap = true;
     private boolean CreativeModeBypassProtection = false;
@@ -61,5 +65,9 @@ public class SimpleClaimsConfig {
 
     public boolean isCreativeModeBypassProtection() {
         return CreativeModeBypassProtection;
+    }
+
+    public boolean isDefaultPartyPVPEnabled() {
+        return DefaultPartyPVPEnabled;
     }
 }
