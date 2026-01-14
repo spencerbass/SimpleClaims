@@ -10,6 +10,7 @@
 * Performance: ClaimManager now uses O(1) lookups for party/claim operations
 * Performance: PartyInfo now uses O(1) lookups for member/override checks
 * Changed the category name for the chunk config to make it more clear what it does
+* Added a way to remove parties from the admin party list
 
 # 1.0.6
 

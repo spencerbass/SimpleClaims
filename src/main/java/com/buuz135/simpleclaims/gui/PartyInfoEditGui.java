@@ -58,6 +58,7 @@ public class PartyInfoEditGui extends InteractiveCustomUIPage<PartyInfoEditGui.P
         if (data.save != null) {
             this.info.setName(this.name);
             this.info.setDescription(this.description);
+            ClaimManager.getInstance().queueMapUpdateForParty(this.info);
             ClaimManager.getInstance().markDirty();
         }
         if (data.cancel != null) {
@@ -95,7 +96,6 @@ public class PartyInfoEditGui extends InteractiveCustomUIPage<PartyInfoEditGui.P
             } catch (NumberFormatException e) {
                 System.out.println("Invalid color");
             }
-
         }
         this.sendUpdate();
     }

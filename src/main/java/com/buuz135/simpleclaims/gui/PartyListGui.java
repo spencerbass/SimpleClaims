@@ -2,6 +2,8 @@ package com.buuz135.simpleclaims.gui;
 
 import com.buuz135.simpleclaims.claim.ClaimManager;
 import com.buuz135.simpleclaims.claim.party.PartyInfo;
+import com.buuz135.simpleclaims.claim.party.PartyOverride;
+import com.buuz135.simpleclaims.claim.party.PartyOverrides;
 import com.buuz135.simpleclaims.commands.CommandMessages;
 import com.hypixel.hytale.codec.Codec;
 import com.hypixel.hytale.codec.KeyedCodec;
@@ -27,10 +29,12 @@ import java.util.UUID;
 public class PartyListGui extends InteractiveCustomUIPage<PartyListGui.PartyListCodec> {
 
     private String searchQuery;
+    private String requestingConfirmation;
 
     public PartyListGui(@NonNullDecl PlayerRef playerRef) {
         super(playerRef, CustomPageLifetime.CanDismiss, PartyListCodec.CODEC);
         this.searchQuery = "";
+        this.requestingConfirmation = "-1";
     }
 
     @Override
@@ -63,6 +67,27 @@ public class PartyListGui extends InteractiveCustomUIPage<PartyListGui.PartyList
                 }
             }
         }
+        if (data.removeButtonAction != null) {
+            var split = data.removeButtonAction.split(":");
+            var action = split[0];
+            var index = split[1];
+            if (action.equals("Click")) {
+                this.requestingConfirmation = index;
+            }
+            if (action.equals("Delete")) {
+                var party = ClaimManager.getInstance().getPartyById(UUID.fromString(index));
+                if (party != null) {
+                    ClaimManager.getInstance().disbandParty(party);
+                    ClaimManager.getInstance().markDirty();
+                    playerRef.sendMessage(CommandMessages.PARTY_DISBANDED);
+                }
+            }
+            UICommandBuilder commandBuilder = new UICommandBuilder();
+            UIEventBuilder eventBuilder = new UIEventBuilder();
+            this.build(ref, commandBuilder, eventBuilder, store);
+            this.sendUpdate(commandBuilder, eventBuilder, true);
+            return;
+        }
         this.sendUpdate();
     }
 
@@ -84,6 +109,13 @@ public class PartyListGui extends InteractiveCustomUIPage<PartyListGui.PartyList
             uiCommandBuilder.set("#PartyCards[" + i + "] #PartyName.Text", value.getName());
             uiEventBuilder.addEventBinding(CustomUIEventBindingType.Activating, "#PartyCards[" + i + "] #EditPartyButton", EventData.of("Action", "Edit:" + value.getId().toString()), false);
             uiEventBuilder.addEventBinding(CustomUIEventBindingType.Activating, "#PartyCards[" + i + "] #UsePartyButton", EventData.of("Action", "Use:" + value.getId().toString()), false);
+            if (this.requestingConfirmation.equals(value.getId().toString())) {
+                uiCommandBuilder.set("#PartyCards[" + i + "] #RemovePartyButton.Text", "Are you sure?");
+                uiEventBuilder.addEventBinding(CustomUIEventBindingType.Activating, "#PartyCards[" + i + "] #RemovePartyButton", EventData.of("RemoveButtonAction", "Delete:" + value.getId().toString()), false);
+                uiEventBuilder.addEventBinding(CustomUIEventBindingType.MouseExited, "#PartyCards[" + i + "] #RemovePartyButton", EventData.of("RemoveButtonAction", "Click:-1"), false);
+            } else {
+                uiEventBuilder.addEventBinding(CustomUIEventBindingType.Activating, "#PartyCards[" + i + "] #RemovePartyButton", EventData.of("RemoveButtonAction", "Click:" + value.getId().toString()), false);
+            }
             ++i;
         }
     }
@@ -91,15 +123,19 @@ public class PartyListGui extends InteractiveCustomUIPage<PartyListGui.PartyList
     public static class PartyListCodec {
         static final String KEY_ACTION = "Action";
         static final String KEY_SEARCH_QUERY = "@SearchQuery";
+        static final String KEY_REMOVE_BUTTON_ACTION = "RemoveButtonAction";
+
 
         public static final BuilderCodec<PartyListCodec> CODEC = BuilderCodec.<PartyListCodec>builder(PartyListCodec.class, PartyListCodec::new)
                 .addField(new KeyedCodec<>(KEY_SEARCH_QUERY, Codec.STRING), (searchGuiData, s) -> searchGuiData.searchQuery = s, searchGuiData -> searchGuiData.searchQuery)
                 .addField(new KeyedCodec<>(KEY_ACTION, Codec.STRING), (searchGuiData, s) -> searchGuiData.action = s, searchGuiData -> searchGuiData.action)
+                .addField(new KeyedCodec<>(KEY_REMOVE_BUTTON_ACTION, Codec.STRING), (searchGuiData, s) -> searchGuiData.removeButtonAction = s, searchGuiData -> searchGuiData.removeButtonAction)
 
                 .build();
 
         private String action;
         private String searchQuery;
+        private String removeButtonAction;
 
     }
 }

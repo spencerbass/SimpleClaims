@@ -50,6 +50,7 @@ public class UnclaimChunkCommand extends AbstractAsyncCommand {
                             return;
                         }
                         ClaimManager.getInstance().unclaimRawCoords(player.getWorld().getName(), (int) playerRef.getTransform().getPosition().getX(), (int) playerRef.getTransform().getPosition().getZ());
+                        ClaimManager.getInstance().queueMapUpdate(player.getWorld(), chunk.getChunkX(), chunk.getChunkZ());
                         player.sendMessage(CommandMessages.UNCLAIMED);
                     }
                 }, world);

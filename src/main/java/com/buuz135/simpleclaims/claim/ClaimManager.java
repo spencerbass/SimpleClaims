@@ -1,5 +1,6 @@
 package com.buuz135.simpleclaims.claim;
 
+import com.buuz135.simpleclaims.Main;
 import com.buuz135.simpleclaims.claim.party.PartyInvite;
 import com.buuz135.simpleclaims.commands.CommandMessages;
 import com.buuz135.simpleclaims.files.AdminOverridesBlockingFile;
@@ -331,7 +332,7 @@ public class ClaimManager {
         for (UUID member : partyInfo.getMembers()) {
             playerToParty.remove(member);
         }
-
+        queueMapUpdateForParty(partyInfo);
         this.getChunks().forEach((dimension, chunkInfos) -> chunkInfos.values().removeIf(chunkInfo -> chunkInfo.getPartyOwner().equals(partyInfo.getId())));
         partyClaimCounts.remove(partyInfo.getId());
 
@@ -341,6 +342,19 @@ public class ClaimManager {
 
     public Set<UUID> getAdminClaimOverrides() {
         return adminOverridesBlockingFile.getAdminOverrides();
+    }
+
+    public void queueMapUpdateForParty(PartyInfo partyInfo) {
+        this.getChunks().forEach((dimension, chunkInfos) -> {
+            var world = Main.WORLDS.get(dimension);
+            if (world != null) {
+                for (ChunkInfo value : chunkInfos.values()) {
+                    if (value.getPartyOwner().equals(partyInfo.getId())) {
+                        queueMapUpdate(world, value.getChunkX(), value.getChunkZ());
+                    }
+                }
+            }
+        });
     }
 
     public void queueMapUpdate(World world, int chunkX, int chunkZ) {
