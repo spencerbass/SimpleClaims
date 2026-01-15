@@ -24,16 +24,20 @@ repositories {
 def os = org.gradle.internal.os.OperatingSystem.current()
 def userHome = System.getProperty("user.home")
 
+def hytaleHome
 def hytaleServerJar
 if (os.isWindows()) {
-    hytaleServerJar = "$userHome/AppData/Roaming/Hytale/install/release/package/game/$game_build/Server/HytaleServer.jar"
+    hytaleHome = "$userHome/AppData/Roaming/Hytale"
 } else if (os.isMacOsX()) {
-    hytaleServerJar = "$userHome/Library/Application Support/Hytale/install/release/package/game/$game_build/Server/HytaleServer.jar"
+    hytaleHome = "$userHome/Library/Application Support/"
 } else if (os.isLinux()) {
-    hytaleServerJar = "$userHome/.local/share/Hytale/install/release/package/game/$game_build/Server/HytaleServer.jar"
+    hytaleHome = "$userHome/.local/share/"
 } else {
     throw new GradleException("Unsupported OS for Hytale")
 }
+
+hytaleServerJar = "$hytaleHome/install/release/package/game/$game_build/Server/HytaleServer.jar"
+
 
 
 dependencies {
