@@ -179,7 +179,7 @@ public class ClaimManager {
         if (adminOverridesBlockingFile.getAdminOverrides().contains(playerUUID)) return true;
 
         var chunkInfo = getChunkRawCoords(dimension, chunkX, chunkZ);
-        if (chunkInfo == null) return true;
+        if (chunkInfo == null) return !Arrays.asList(Main.CONFIG.get().getFullWorldProtection()).contains(dimension);
 
         var chunkParty = getPartyById(chunkInfo.getPartyOwner());
         if (chunkParty == null || interactMethod.test(chunkParty)) return true;
