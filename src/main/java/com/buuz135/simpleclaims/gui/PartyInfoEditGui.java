@@ -133,6 +133,9 @@ public class PartyInfoEditGui extends InteractiveCustomUIPage<PartyInfoEditGui.P
             if (action.equals("AllowEntrySetting")) {
                 this.info.setOverride(new PartyOverride(PartyOverrides.PARTY_PROTECTION_ALLOW_ENTRY, new PartyOverride.PartyOverrideValue("bool", !this.info.isAllowEntryEnabled())));
             }
+            if (action.equals("FriendlyFireSetting")) {
+                this.info.setOverride(new PartyOverride(PartyOverrides.PARTY_PROTECTION_FRIENDLY_FIRE, new PartyOverride.PartyOverrideValue("bool", !this.info.isFriendlyFireEnabled())));
+            }
             UICommandBuilder commandBuilder = new UICommandBuilder();
             UIEventBuilder eventBuilder = new UIEventBuilder();
             this.build(ref, commandBuilder, eventBuilder, store);
@@ -340,12 +343,16 @@ public class PartyInfoEditGui extends InteractiveCustomUIPage<PartyInfoEditGui.P
         uiCommandBuilder.set("#AllowEntrySetting.Visible", Main.CONFIG.get().isEnableAlloyEntryTesting());
         if (!isOpEdit)
             uiCommandBuilder.set("#AllowEntrySetting #CheckBox.Disabled", !playerCanModify || !Main.CONFIG.get().isAllowPartyAllowEntrySetting());
+        uiCommandBuilder.set("#FriendlyFireSetting #CheckBox.Value", this.info.isFriendlyFireEnabled());
+        if (!isOpEdit)
+            uiCommandBuilder.set("#FriendlyFireSetting #CheckBox.Disabled", !playerCanModify || !Main.CONFIG.get().isAllowPartyFriendlyFireSetting());
 
         uiEventBuilder.addEventBinding(CustomUIEventBindingType.ValueChanged, "#PlaceBlocksSetting #CheckBox", EventData.of("RemoveButtonAction", "PlaceBlocksSetting:0"), false);
         uiEventBuilder.addEventBinding(CustomUIEventBindingType.ValueChanged, "#BreakBlocksSetting #CheckBox", EventData.of("RemoveButtonAction", "BreakBlocksSetting:0"), false);
         uiEventBuilder.addEventBinding(CustomUIEventBindingType.ValueChanged, "#InteractBlocksSetting #CheckBox", EventData.of("RemoveButtonAction", "InteractBlocksSetting:0"), false);
         uiEventBuilder.addEventBinding(CustomUIEventBindingType.ValueChanged, "#PVPSetting #CheckBox", EventData.of("RemoveButtonAction", "PVPSetting:0"), false);
         uiEventBuilder.addEventBinding(CustomUIEventBindingType.ValueChanged, "#AllowEntrySetting #CheckBox", EventData.of("RemoveButtonAction", "AllowEntrySetting:0"), false);
+        uiEventBuilder.addEventBinding(CustomUIEventBindingType.ValueChanged, "#FriendlyFireSetting #CheckBox", EventData.of("RemoveButtonAction", "FriendlyFireSetting:0"), false);
         uiEventBuilder.addEventBinding(CustomUIEventBindingType.Activating, "#EditInteractButton", EventData.of("Button", "EditInteract"), false);
 
         uiCommandBuilder.set("#ClaimColorPickerGroup #ClaimColorPicker.Value", String.format("#%06X", (0xFFFFFF & this.info.getColor())));

@@ -22,6 +22,9 @@ public class SimpleClaimsConfig {
             .append(new KeyedCodec<Boolean>("DefaultPartyPVPEnabled", Codec.BOOLEAN),
                     (simpleClaimsConfig, value, extraInfo) -> simpleClaimsConfig.DefaultPartyPVPEnabled = value,
                     (simpleClaimsConfig, extraInfo) -> simpleClaimsConfig.DefaultPartyPVPEnabled).add()
+            .append(new KeyedCodec<Boolean>("DefaultPartyFriendlyFireEnabled", Codec.BOOLEAN),
+                    (simpleClaimsConfig, value, extraInfo) -> simpleClaimsConfig.DefaultPartyFriendlyFireEnabled = value,
+                    (simpleClaimsConfig, extraInfo) -> simpleClaimsConfig.DefaultPartyFriendlyFireEnabled).add()
             .append(new KeyedCodec<Boolean>("DefaultPartyAllowEntry", Codec.BOOLEAN),
                     (simpleClaimsConfig, value, extraInfo) -> simpleClaimsConfig.DefaultPartyAllowEntry = value,
                     (simpleClaimsConfig, extraInfo) -> simpleClaimsConfig.DefaultPartyAllowEntry).add()
@@ -44,6 +47,9 @@ public class SimpleClaimsConfig {
             .append(new KeyedCodec<Boolean>("AllowPartyPVPSettingChanges", Codec.BOOLEAN),
                     (simpleClaimsConfig, value, extraInfo) -> simpleClaimsConfig.AllowPartyPVPSetting = value,
                     (simpleClaimsConfig, extraInfo) -> simpleClaimsConfig.AllowPartyPVPSetting).add()
+            .append(new KeyedCodec<Boolean>("AllowPartyFriendlyFireSettingChanges", Codec.BOOLEAN),
+                    (simpleClaimsConfig, value, extraInfo) -> simpleClaimsConfig.AllowPartyFriendlyFireSetting = value,
+                    (simpleClaimsConfig, extraInfo) -> simpleClaimsConfig.AllowPartyFriendlyFireSetting).add()
             .append(new KeyedCodec<Boolean>("AllowPartyPlaceBlockSettingChanges", Codec.BOOLEAN),
                     (simpleClaimsConfig, value, extraInfo) -> simpleClaimsConfig.AllowPartyPlaceBlockSetting = value,
                     (simpleClaimsConfig, extraInfo) -> simpleClaimsConfig.AllowPartyPlaceBlockSetting).add()
@@ -105,6 +111,7 @@ public class SimpleClaimsConfig {
     private boolean DefaultPartyBlockBreakEnabled = false;
     private boolean DefaultPartyBlockInteractEnabled = false;
     private boolean DefaultPartyPVPEnabled = false;
+    private boolean DefaultPartyFriendlyFireEnabled = false;
     private boolean DefaultPartyAllowEntry = true;
     private boolean DefaultPartyInteractChest = false;
     private boolean DefaultPartyInteractDoor = false;
@@ -113,6 +120,7 @@ public class SimpleClaimsConfig {
     private boolean DefaultPartyInteractPortal = false;
 
     private boolean AllowPartyPVPSetting = true;
+    private boolean AllowPartyFriendlyFireSetting = true;
     private boolean AllowPartyPlaceBlockSetting = true;
     private boolean AllowPartyBreakBlockSetting = true;
     private boolean AllowPartyInteractBlockSetting = true;
@@ -166,8 +174,16 @@ public class SimpleClaimsConfig {
         return DefaultPartyPVPEnabled;
     }
 
+    public boolean isDefaultPartyFriendlyFireEnabled() {
+        return DefaultPartyFriendlyFireEnabled;
+    }
+
     public boolean isAllowPartyPVPSetting() {
         return AllowPartyPVPSetting;
+    }
+
+    public boolean isAllowPartyFriendlyFireSetting() {
+        return AllowPartyFriendlyFireSetting;
     }
 
     public String[] getWorldNameBlacklistForClaiming() {

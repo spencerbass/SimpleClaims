@@ -160,6 +160,14 @@ public class PartyInfo {
         return Main.CONFIG.get().isDefaultPartyPVPEnabled();
     }
 
+    public boolean isFriendlyFireEnabled() {
+        var override = this.getOverride(PartyOverrides.PARTY_PROTECTION_FRIENDLY_FIRE);
+        if (override != null) {
+            return (Boolean) override.getValue().getTypedValue();
+        }
+        return Main.CONFIG.get().isDefaultPartyFriendlyFireEnabled();
+    }
+
     public boolean isAllowEntryEnabled() {
         var override = this.getOverride(PartyOverrides.PARTY_PROTECTION_ALLOW_ENTRY);
         if (override != null) {

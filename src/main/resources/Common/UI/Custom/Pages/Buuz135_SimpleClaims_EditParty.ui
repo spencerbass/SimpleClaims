@@ -172,6 +172,15 @@ $C.@PageOverlay {
           }
         }
 
+        Group {
+          LayoutMode: Left;
+          Anchor: (Bottom: 10);
+          $C.@CheckBoxWithLabel #FriendlyFireSetting {
+            @Text = "Party PVP";
+            Padding: (Bottom: 4);
+          }
+        }
+
        Group #Separator{
           Anchor: (Width: 300, Top: 6);
           OutlineColor: #93844c;

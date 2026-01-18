@@ -14,6 +14,8 @@ These settings define the initial permissions and limits for newly created parti
 - **DefaultPartyBlockInteractEnabled** (Boolean, Default: `false`): Whether general block interaction is allowed for
   non-members in claimed chunks by default.
 - **DefaultPartyPVPEnabled** (Boolean, Default: `false`): Whether PVP is enabled within claimed chunks by default.
+- **DefaultPartyFriendlyFireEnabled** (Boolean, Default: `false`): Whether PVP between members of the same party is
+  enabled by default.
 - **DefaultPartyAllowEntry** (Boolean, Default: `true`): Whether non-members are allowed to enter claimed chunks by
   default.
 - **DefaultPartyInteractChest** (Boolean, Default: `false`): Whether non-members can interact with chests in claimed
@@ -33,6 +35,8 @@ These settings control whether party owners are allowed to change specific permi
 
 - **AllowPartyPVPSettingChanges** (Boolean, Default: `true`): If `true`, party owners can toggle PVP settings for their
   claims.
+- **AllowPartyFriendlyFireSettingChanges** (Boolean, Default: `true`): If `true`, party owners can toggle friendly fire
+  settings for their party.
 - **AllowPartyPlaceBlockSettingChanges** (Boolean, Default: `true`): If `true`, party owners can toggle block placement
   permissions.
 - **AllowPartyBreakBlockSettingChanges** (Boolean, Default: `true`): If `true`, party owners can toggle block breaking
