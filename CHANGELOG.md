@@ -1,3 +1,7 @@
+# 1.0.19
+
+* Replaced interactions with custom ones to allow claim protection, closes #40
+
 # 1.0.18
 
 * Fixed not shipping SQLite dependency, closes #94 closes #95
