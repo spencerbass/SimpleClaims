@@ -336,15 +336,9 @@ public class ClaimManager {
         this.playerToParty.remove(player.getUuid());
 
         if (partyInfo.isOwner(player.getUuid())) {
-            partyInfo.removeMember(player.getUuid());
-            if (partyInfo.getMembers().length > 0) {
-                partyInfo.setOwner(partyInfo.getMembers()[0]);
-                player.sendMessage(CommandMessages.PARTY_OWNER_TRANSFERRED.param("username", this.getPlayerNameTracker().getPlayerName(partyInfo.getMembers()[0])));
-            } else {
-                disbandParty(partyInfo);
-                player.sendMessage(CommandMessages.PARTY_DISBANDED);
-                return;
-            }
+            disbandParty(partyInfo);
+            player.sendMessage(CommandMessages.PARTY_DISBANDED);
+            return;
         } else {
             partyInfo.removeMember(player.getUuid());
             player.sendMessage(CommandMessages.PARTY_LEFT);

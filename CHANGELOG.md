@@ -2,6 +2,7 @@
 
 * Replaced interactions with custom ones to allow claim protection, closes #40
 * Fixed library conflicts, closes #98
+* Removed party ownership transfer when leaving a party, closes #100
 
 # 1.0.18
 
