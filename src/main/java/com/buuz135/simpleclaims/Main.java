@@ -12,16 +12,14 @@ import com.buuz135.simpleclaims.map.SimpleClaimsWorldMapProvider;
 import com.buuz135.simpleclaims.systems.events.*;
 import com.buuz135.simpleclaims.systems.tick.*;
 import com.buuz135.simpleclaims.util.PartyInactivityThread;
-
-import com.buuz135.simpleclaims.systems.tick.WorldMapUpdateTickingSystem;
-import com.buuz135.simpleclaims.util.Permissions;
+import com.buuz135.simpleclaims.util.WindowExtraResourcesRewriter;
 import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.event.events.player.AddPlayerToWorldEvent;
 import com.hypixel.hytale.server.core.event.events.player.PlayerDisconnectEvent;
+import com.hypixel.hytale.server.core.io.PacketHandler;
 import com.hypixel.hytale.server.core.modules.interaction.interaction.config.Interaction;
 import com.hypixel.hytale.server.core.plugin.JavaPlugin;
 import com.hypixel.hytale.server.core.plugin.JavaPluginInit;
-
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.events.AddWorldEvent;
 import com.hypixel.hytale.server.core.universe.world.worldmap.provider.IWorldMapProvider;
@@ -59,6 +57,7 @@ public class Main extends JavaPlugin {
             this.getEntityStoreRegistry().registerSystem(new ChunkBordersTickingSystem());
         this.getEntityStoreRegistry().registerSystem(new CustomDamageEventSystem());
         this.getEntityStoreRegistry().registerSystem(new QueuedCraftClaimFilterSystem());
+        this.getEntityStoreRegistry().registerSystem(new CraftingUiQuantitiesSystem());
 
         // Register global (world-level) event systems for block damage. Allows us to block custom item interactions from damaging claims.
         this.getEntityStoreRegistry().registerSystem(new GlobalDamageBlockEventSystem());
@@ -87,6 +86,15 @@ public class Main extends JavaPlugin {
             var player = event.getHolder().getComponent(Player.getComponentType());
             var playerRef = event.getHolder().getComponent(PlayerRef.getComponentType());
             ClaimManager.getInstance().setPlayerName(playerRef.getUuid(), player.getDisplayName(), System.currentTimeMillis());
+
+            PacketHandler ph = playerRef.getPacketHandler();
+            var ch = ph.getChannel();
+            var pipeline = playerRef.getPacketHandler().getChannel().pipeline();
+            if (pipeline.get(WindowExtraResourcesRewriter.HANDLER_NAME) == null) {
+                pipeline.addLast(WindowExtraResourcesRewriter.HANDLER_NAME, new WindowExtraResourcesRewriter());
+            }
+            // ensure per-channel cache exists
+            WindowExtraResourcesRewriter.getOrCreateMap(ch);
         });
 
         this.getEventRegistry().registerGlobal(PlayerDisconnectEvent.class, (event) -> {
